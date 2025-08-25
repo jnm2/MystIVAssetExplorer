@@ -1,0 +1,77 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:MystIVAssetExplorer.ViewModels"
+             xmlns:m4ae="clr-namespace:MystIVAssetExplorer"
+             xmlns:avalonia="clr-namespace:FluentIcons.Avalonia;assembly=FluentIcons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MystIVAssetExplorer.Views.MainView"
+             x:DataType="vm:MainViewModel"
+             FontSize="12">
+  <Design.DataContext>
+    <!-- This only sets the DataContext for the previewer in an IDE,
+         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+    <vm:MainViewModel />
+  </Design.DataContext>
+
+  <UserControl.Resources>
+      <m4ae:FileSizeConverter x:Key="FileSizeConverter"/>
+  </UserControl.Resources>
+
+  <Grid ColumnDefinitions="240, 4, *">
+    <TreeView ItemsSource="{Binding AssetBrowserNodes}"
+              SelectedItem="{Binding SelectedAssetBrowserNode}">
+      <TreeView.ItemTemplate>
+        <TreeDataTemplate ItemsSource="{Binding ChildNodes}">
+          <StackPanel  Orientation="Horizontal">
+            <avalonia:FluentIcon Icon="Folder" Height="14" Padding="0 0 4 0" />
+            <TextBlock Text="{Binding Name}" />
+          </StackPanel>
+        </TreeDataTemplate>
+      </TreeView.ItemTemplate>
+      <TreeView.Styles>
+        <Style Selector="TreeViewItem">
+          <Setter Property="m4ae:TreeViewBehaviors.AutoExpandSingleChild" Value="True" />
+          <Setter Property="IsExpanded" Value="{Binding (vm:AssetBrowserNode).IsExpanded}"></Setter>
+          <Setter Property="MinHeight" Value="20" />
+        </Style>
+      </TreeView.Styles>
+    </TreeView>
+    <GridSplitter Grid.Column="1" Background="Gray" ResizeDirection="Columns" />
+    <Grid Grid.Column="2" RowDefinitions="Auto *">
+      <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="8">
+        <Button Command="{Binding ExportCommand}"
+                CommandParameter="{Binding ElementName=FolderListing}" >
+          <TextBlock>
+            <InlineUIContainer>
+                <avalonia:FluentIcon Icon="SaveMultiple" Height="16" />
+            </InlineUIContainer>
+            <Run>Export...</Run>
+          </TextBlock>
+        </Button>
+      </StackPanel>
+      <DataGrid Grid.Row="1"
+                Name="FolderListing"
+                ItemsSource="{Binding SelectedAssetBrowserNode.FolderListing}"
+                IsReadOnly="True">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" />
+          <DataGridTextColumn Header="Size" Binding="{Binding Size, Converter={StaticResource FileSizeConverter}, Mode=OneWay}" />
+        </DataGrid.Columns>
+        <DataGrid.Styles>
+          <Style Selector="DataGridCell">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="MinHeight" Value="20" />
+          </Style>
+          <Style Selector="DataGridColumnHeader">
+            <Setter Property="MinHeight" Value="20" />
+          </Style>
+          <Style Selector="DataGrid:focus DataGridCell:current /template/ Grid#FocusVisual">
+            <Setter Property="IsVisible" Value="False" />
+          </Style>
+        </DataGrid.Styles>
+      </DataGrid>
+    </Grid>
+  </Grid>
+</UserControl>
