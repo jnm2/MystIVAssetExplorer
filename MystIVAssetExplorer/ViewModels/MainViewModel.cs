@@ -1,15 +1,15 @@
-﻿using MystIVAssetExplorer.Formats;
-using ReactiveUI;
-using System;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Reactive;
-using System.Threading.Tasks;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.VisualTree;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
+using MystIVAssetExplorer.Formats;
+using ReactiveUI;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reactive;
+using System.Threading.Tasks;
 
 namespace MystIVAssetExplorer.ViewModels;
 
@@ -21,6 +21,8 @@ public class MainViewModel : ViewModelBase, IDisposable
 
     public AssetBrowserNode? SelectedAssetBrowserNode { get; set => this.RaiseAndSetIfChanged(ref field, value); }
 
+    public ObservableCollection<AssetFolderListing> SelectedFolderListings { get; } = [];
+
     public MainViewModel()
     {
         m4bContainingFolder = M4bReader.OpenM4bFolder(@"C:\Program Files (x86)\GOG Galaxy\Games\Myst 4\data");
@@ -28,6 +30,37 @@ public class MainViewModel : ViewModelBase, IDisposable
         AssetBrowserNodes = CreateNodes(m4bContainingFolder);
 
         ExportCommand = ReactiveCommand.CreateFromTask((DataGrid grid) => ExportAsync(grid));
+    }
+
+    private void FindInFileName(string text)
+    {
+        Search(AssetBrowserNodes);
+
+        bool Search(IEnumerable<AssetBrowserNode> nodes)
+        {
+            foreach (var node in nodes)
+            {
+                var matchedFile = node.FolderListing
+                    .OfType<AssetFolderListingFile>()
+                    .FirstOrDefault(f => f.File.Name.Contains(text, StringComparison.OrdinalIgnoreCase));
+
+                if (matchedFile is not null)
+                {
+                    SelectedAssetBrowserNode = node;
+                    SelectedFolderListings.Clear();
+                    SelectedFolderListings.Add(matchedFile);
+                    return true;
+                }
+
+                if (Search(node.ChildNodes))
+                {
+                    node.IsExpanded = true;
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 
     private async Task ExportAsync(DataGrid dataGrid)

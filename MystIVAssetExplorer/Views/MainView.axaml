@@ -54,7 +54,8 @@
       <DataGrid Grid.Row="1"
                 Name="FolderListing"
                 ItemsSource="{Binding SelectedAssetBrowserNode.FolderListing}"
-                IsReadOnly="True">
+                IsReadOnly="True"
+                m4ae:DataGridProperties.BindableSelectedItems="{Binding SelectedFolderListings}">
         <DataGrid.Columns>
           <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" />
           <DataGridTextColumn Header="Size" Binding="{Binding Size, Converter={StaticResource FileSizeConverter}, Mode=OneWay}" />
