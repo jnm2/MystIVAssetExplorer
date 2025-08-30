@@ -5,6 +5,7 @@ using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using MystIVAssetExplorer.Formats;
 using MystIVAssetExplorer.Formats.UbiObjects;
+using MystIVAssetExplorer.Services;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,8 @@ public class MainViewModel : ViewModelBase, IDisposable
     private readonly M4bContainingFolder m4bContainingFolder;
     private readonly Dictionary<(uint SoundId, uint GroupId), string> sequenceSoundNames = new();
     private readonly Dictionary<string, M4bFile> soundDataFiles;
+    private readonly AudioService audioService = new();
+    private AssetFolderListingSoundStream? lastPlayedAsset;
 
     public ObservableCollection<AssetBrowserNode> AssetBrowserNodes { get; }
 
@@ -30,6 +33,8 @@ public class MainViewModel : ViewModelBase, IDisposable
 
     public MainViewModel()
     {
+        audioService.PlaybackStopped += AudioService_PlaybackStopped;
+
         m4bContainingFolder = M4bReader.OpenM4bFolder(@"C:\Program Files (x86)\GOG Galaxy\Games\Myst 4\data");
 
         var soundM4b = m4bContainingFolder.Archives.Single(a => a.Name == "sound.m4b");
@@ -61,6 +66,9 @@ public class MainViewModel : ViewModelBase, IDisposable
         AssetBrowserNodes = CreateNodes(m4bContainingFolder);
 
         ExportCommand = ReactiveCommand.CreateFromTask((DataGrid grid) => ExportAsync(grid));
+        PlayCommand = ReactiveCommand.CreateFromTask((DataGrid grid) => PlayAsync(grid));
+
+        FindInFileName("PAD_Play_MU_TO_02B_pad");
     }
 
     private void FindInFileName(string text)
@@ -72,8 +80,7 @@ public class MainViewModel : ViewModelBase, IDisposable
             foreach (var node in nodes)
             {
                 var matchedFile = node.FolderListing
-                    .OfType<AssetFolderListingFile>()
-                    .FirstOrDefault(f => f.File.Name.Contains(text, StringComparison.OrdinalIgnoreCase));
+                    .FirstOrDefault(f => f.Name.Contains(text, StringComparison.OrdinalIgnoreCase));
 
                 if (matchedFile is not null)
                 {
@@ -143,12 +150,58 @@ public class MainViewModel : ViewModelBase, IDisposable
         }
     }
 
+    private async Task PlayAsync(DataGrid dataGrid)
+    {
+        if (IsPlaying)
+        {
+            audioService.Pause();
+            IsPlaying = false;
+            return;
+        }
+
+        var window = (Window)dataGrid.GetVisualRoot()!;
+
+        var soundAsset = SelectedFolderListings.OfType<AssetFolderListingSoundStream>().FirstOrDefault();
+        if (soundAsset is null)
+        {
+            await MessageBoxManager.GetMessageBoxStandard("Play", "Please select one or more sound files to play.", ButtonEnum.Ok, Icon.Error, WindowStartupLocation.CenterOwner)
+                .ShowWindowDialogAsync(window);
+            return;
+        }
+
+        if (lastPlayedAsset == soundAsset)
+        {
+            audioService.Play();
+            IsPlaying = true;
+            return;
+        }
+
+        lastPlayedAsset = soundAsset;
+
+        var stream = new MemoryStream();
+        await soundAsset.ExportToStreamAsync(stream);
+        stream.Position = 0;
+
+        audioService.SetAudioFile(stream, soundAsset.SoundStream.Format);
+        audioService.Play();
+        IsPlaying = true;
+    }
+
+    private void AudioService_PlaybackStopped(object? sender, EventArgs e)
+    {
+        IsPlaying = false;
+    }
+
+    public bool IsPlaying { get; private set => this.RaiseAndSetIfChanged(ref field, value); }
+
     public void Dispose()
     {
         m4bContainingFolder.Dispose();
     }
 
     public ReactiveCommand<DataGrid, Unit> ExportCommand { get; }
+
+    public ReactiveCommand<DataGrid, Unit> PlayCommand { get; }
 
     private ObservableCollection<AssetBrowserNode> CreateNodes(M4bContainingFolder folder)
     {
