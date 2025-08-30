@@ -42,12 +42,22 @@
     <Grid Grid.Column="2" RowDefinitions="Auto *">
       <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="8">
         <Button Command="{Binding ExportCommand}"
-                CommandParameter="{Binding ElementName=FolderListing}" >
+                CommandParameter="{Binding ElementName=FolderListing}"
+                Margin="0 0 8 0">
           <TextBlock>
             <InlineUIContainer>
                 <avalonia:FluentIcon Icon="SaveMultiple" Height="16" />
             </InlineUIContainer>
             <Run>Export...</Run>
+          </TextBlock>
+        </Button>
+        <Button Command="{Binding PlayCommand}"
+                CommandParameter="{Binding ElementName=FolderListing}">
+          <TextBlock>
+            <InlineUIContainer>
+              <avalonia:FluentIcon Icon="{Binding IsPlaying, Converter={m4ae:BoolToObjectConverter TrueValue='Pause', FalseValue='Play'}}" Height="16" />
+            </InlineUIContainer>
+            <Run Text="{Binding IsPlaying, Converter={m4ae:BoolToObjectConverter TrueValue='Pause', FalseValue='Play'}}" />
           </TextBlock>
         </Button>
       </StackPanel>
