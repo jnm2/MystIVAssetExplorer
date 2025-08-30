@@ -7,15 +7,19 @@ using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
+using MystIVAssetExplorer.Formats.UbiObjects;
 
 namespace MystIVAssetExplorer.ViewModels;
 
 public class MainViewModel : ViewModelBase, IDisposable
 {
     private readonly M4bContainingFolder m4bContainingFolder;
+    private readonly Dictionary<(uint SoundId, uint GroupId), string> sequenceSoundNames = new();
+    private readonly Dictionary<string, M4bFile> soundDataFiles;
 
     public ObservableCollection<AssetBrowserNode> AssetBrowserNodes { get; }
 
@@ -26,6 +30,32 @@ public class MainViewModel : ViewModelBase, IDisposable
     public MainViewModel()
     {
         m4bContainingFolder = M4bReader.OpenM4bFolder(@"C:\Program Files (x86)\GOG Galaxy\Games\Myst 4\data");
+
+        var soundM4b = m4bContainingFolder.Archives.Single(a => a.Name == "sound.m4b");
+
+        foreach (var seqFile in soundM4b.Subdirectories.Single(d => d.Name == "sequence").Files)
+        {
+            var binaryReader = new UbiBinaryReader(seqFile.Memory.Span);
+            binaryReader.ExpectString(UbiSndSequence.UbiClassName);
+            var sequence = UbiSndSequence.DeserializeContents(ref binaryReader);
+
+            foreach (var sound in sequence.Sounds)
+                sequenceSoundNames.Add((sound.SoundId, sound.GroupId), sound.Name);
+        }
+
+        var language = m4bContainingFolder.Subfolders.Single();
+
+        soundDataFiles = (
+            from directory in new[]
+            {
+                soundM4b.Subdirectories.Single(d => d.Name == "data"),
+                language.Archives.Single(a => a.Name == "sound.m4b")
+                    .Subdirectories.Single(d => d.Name == "data")
+                    .Subdirectories.Single(d => d.Name == language.Name),
+            }
+            from file in directory.Files
+            where !file.Name.EndsWith(".sb0", StringComparison.OrdinalIgnoreCase)
+            select file).ToDictionary(f => f.Name, StringComparer.OrdinalIgnoreCase);
 
         AssetBrowserNodes = CreateNodes(m4bContainingFolder);
 
@@ -67,7 +97,7 @@ public class MainViewModel : ViewModelBase, IDisposable
     {
         var window = (Window)dataGrid.GetVisualRoot()!;
 
-        var fileListings = dataGrid.SelectedItems.OfType<AssetFolderListingFile>().ToArray();
+        var fileListings = dataGrid.SelectedItems.OfType<IExportableFolderListing>().ToArray();
         if (fileListings is [])
         {
             await MessageBoxManager.GetMessageBoxStandard("Export files", "Please select one or more files to export.", ButtonEnum.Ok, Icon.Error, WindowStartupLocation.CenterOwner)
@@ -80,9 +110,9 @@ public class MainViewModel : ViewModelBase, IDisposable
         {
             foreach (var listing in fileListings)
             {
-                var file = (await result.CreateFileAsync(listing.File.Name))!;
+                var file = (await result.CreateFileAsync(listing.GetExportFileName()))!;
                 await using var stream = await file.OpenWriteAsync();
-                await stream.WriteAsync(listing.File.Memory);
+                await listing.ExportToStreamAsync(stream);
             }
         }
     }
@@ -94,7 +124,7 @@ public class MainViewModel : ViewModelBase, IDisposable
 
     public ReactiveCommand<DataGrid, Unit> ExportCommand { get; }
 
-    private static ObservableCollection<AssetBrowserNode> CreateNodes(M4bContainingFolder folder)
+    private ObservableCollection<AssetBrowserNode> CreateNodes(M4bContainingFolder folder)
     {
         var collection = new ObservableCollection<AssetBrowserNode>();
 
@@ -119,9 +149,18 @@ public class MainViewModel : ViewModelBase, IDisposable
         return collection;
     }
 
-    private static AssetBrowserNode CreateNode(M4bDirectory directory)
+    private AssetBrowserNode CreateNode(M4bDirectory directory)
     {
         var childNodes = new ObservableCollection<AssetBrowserNode>(directory.Subdirectories.Select(CreateNode));
+        var files = new List<AssetFolderListingFile>();
+
+        foreach (var file in directory.Files)
+        {
+            if (file.Name.EndsWith(".sb0", StringComparison.OrdinalIgnoreCase))
+                childNodes.Add(CreateSb0Node(file));
+            else
+                files.Add(new AssetFolderListingFile(file));
+        }
 
         return new AssetBrowserNode
         {
@@ -129,7 +168,41 @@ public class MainViewModel : ViewModelBase, IDisposable
             ChildNodes = childNodes,
             FolderListing = [
                 .. childNodes.Select(node => new AssetFolderListingSubfolder(node)),
-                .. directory.Files.Select(file => new AssetFolderListingFile(file))],
+                .. files],
+        };
+    }
+
+    private AssetBrowserNode CreateSb0Node(M4bFile m4bFile)
+    {
+        var sb0File = (Sb0File?)null;
+        try
+        {
+            sb0File = Sb0File.Deserialize(m4bFile.Memory);
+        }
+        catch
+        {
+        }
+
+        return new AssetBrowserNode
+        {
+            Name = m4bFile.Name,
+            ChildNodes = [],
+            FolderListing = [..
+                sb0File?.SoundStreams.Select(soundStream =>
+                {
+                    var name =
+                        (!soundStream.ReferencesExternalDataFile ? soundStream.DataFileName : null)
+                        ?? soundStream.SoundIds
+                            .Select(soundId => sequenceSoundNames.GetValueOrDefault((soundId, soundStream.GroupId)))
+                            .FirstOrDefault(name => name is not null)
+                        ?? $"{m4bFile.Name} stream {soundStream.StreamId} → {Path.GetFileNameWithoutExtension(soundStream.DataFileName)}";
+
+                    return (AssetFolderListing)new AssetFolderListingSoundStream(
+                        name,
+                        soundStream,
+                        soundStream.ReferencesExternalDataFile ? soundDataFiles[soundStream.DataFileName] : null);
+                })
+                ?? [new AssetFolderListingMessage("(Failed to read .sb0)")]],
         };
     }
 }
