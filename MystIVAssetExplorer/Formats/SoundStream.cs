@@ -63,7 +63,7 @@ public sealed record SoundStream(
             writer.WriteUInt16LittleEndian((ushort)ChannelCount);
             writer.WriteUInt32LittleEndian(SampleRate);
             writer.WriteUInt32LittleEndian(ByteRate);
-            var blockAlign = SampleRate / ByteRate;
+            var blockAlign = BitsPerSample * ChannelCount / 8;
             writer.WriteUInt16LittleEndian((ushort)blockAlign);
             writer.WriteUInt16LittleEndian((ushort)BitsPerSample);
 
