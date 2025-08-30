@@ -1,8 +1,10 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using MystIVAssetExplorer.Formats;
+using MystIVAssetExplorer.Formats.UbiObjects;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -11,7 +13,6 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
-using MystIVAssetExplorer.Formats.UbiObjects;
 
 namespace MystIVAssetExplorer.ViewModels;
 
@@ -105,14 +106,39 @@ public class MainViewModel : ViewModelBase, IDisposable
             return;
         }
 
-        var result = (await window.StorageProvider.OpenFolderPickerAsync(new() { Title = "Select destination folder for export" })).SingleOrDefault();
-        if (result is not null)
+        if (fileListings is [var singleListing])
         {
-            foreach (var listing in fileListings)
+            var exportFileName = singleListing.GetExportFileName();
+            var extension = Path.GetExtension(exportFileName);
+
+            var result = await window.StorageProvider.SaveFilePickerAsync(new()
             {
-                var file = (await result.CreateFileAsync(listing.GetExportFileName()))!;
-                await using var stream = await file.OpenWriteAsync();
-                await listing.ExportToStreamAsync(stream);
+                Title = "Export " + singleListing.Name,
+                SuggestedFileName = exportFileName,
+                FileTypeChoices =
+                [
+                    .. extension is not "" ? new[] { new FilePickerFileType(extension[1..].ToUpper() + " file") { Patterns = ["*" + extension] } } : [],
+                    new FilePickerFileType("All files") { Patterns = ["*.*"] },
+                ],
+            });
+
+            if (result is not null)
+            {
+                await using var stream = await result.OpenWriteAsync();
+                await singleListing.ExportToStreamAsync(stream);
+            }
+        }
+        else
+        {
+            var result = (await window.StorageProvider.OpenFolderPickerAsync(new() { Title = "Select destination folder for export" })).SingleOrDefault();
+            if (result is not null)
+            {
+                foreach (var listing in fileListings)
+                {
+                    var file = (await result.CreateFileAsync(listing.GetExportFileName()))!;
+                    await using var stream = await file.OpenWriteAsync();
+                    await listing.ExportToStreamAsync(stream);
+                }
             }
         }
     }

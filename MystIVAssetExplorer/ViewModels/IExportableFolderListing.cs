@@ -5,6 +5,7 @@ namespace MystIVAssetExplorer.ViewModels;
 
 public interface IExportableFolderListing
 {
+    string Name { get; }
     string GetExportFileName();
     Task ExportToStreamAsync(Stream stream);
 }
