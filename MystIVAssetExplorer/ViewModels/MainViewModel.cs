@@ -256,12 +256,14 @@ public class MainViewModel : ViewModelBase, IDisposable
     private AssetBrowserNode CreateSb0Node(M4bFile m4bFile)
     {
         var sb0File = (Sb0File?)null;
+        var errorMessage = (string?)null;
         try
         {
             sb0File = Sb0File.Deserialize(m4bFile.Memory);
         }
-        catch
+        catch (NotSupportedException ex)
         {
+            errorMessage = ex.Message;
         }
 
         return new AssetBrowserNode
@@ -283,7 +285,7 @@ public class MainViewModel : ViewModelBase, IDisposable
                         soundStream,
                         soundStream.ReferencesExternalDataFile ? soundDataFiles[soundStream.DataFileName] : null);
                 })
-                ?? [new AssetFolderListingMessage("(Failed to read .sb0)")]],
+                ?? [new AssetFolderListingMessage($"({errorMessage})")]],
         };
     }
 }
