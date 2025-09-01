@@ -3,7 +3,7 @@ using Avalonia.Markup.Xaml;
 using System;
 using System.Globalization;
 
-namespace MystIVAssetExplorer;
+namespace MystIVAssetExplorer.XamlHelpers;
 
 public sealed class BoolToObjectConverter : MarkupExtension, IValueConverter
 {

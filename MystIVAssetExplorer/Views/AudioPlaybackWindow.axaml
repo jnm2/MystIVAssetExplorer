@@ -19,7 +19,7 @@
   </Design.DataContext>
   <Grid ColumnDefinitions="Auto Auto * Auto">
     <ToggleButton Grid.Column="0" MaxHeight="36" IsChecked="{Binding IsPlaying}">
-      <avalonia:FluentIcon Icon="{Binding IsPlaying, Converter={m4ae:BoolToObjectConverter TrueValue='Pause', FalseValue='Play'}}"/>
+      <avalonia:FluentIcon Icon="{Binding IsPlaying, Converter={xh:BoolToObjectConverter TrueValue='Pause', FalseValue='Play'}}"/>
     </ToggleButton>
     <Button Grid.Column="1" MaxHeight="36" Command="{Binding StopCommand}">
       <avalonia:FluentIcon Icon="Stop" />
@@ -28,7 +28,7 @@
             Value="{Binding CurrentTime, Converter={xh:TimeSpanToDoubleConverter}}"
             Maximum="{Binding TotalTime, Converter={xh:TimeSpanToDoubleConverter}}" />
     <ToggleButton Grid.Column="3" MaxHeight="36" IsChecked="{Binding IsLooping}">
-      <avalonia:FluentIcon Icon="{Binding IsLooping, Converter={m4ae:BoolToObjectConverter TrueValue='ArrowRepeatAll', FalseValue='ArrowRepeatAllOff'}}" />
+      <avalonia:FluentIcon Icon="{Binding IsLooping, Converter={xh:BoolToObjectConverter TrueValue='ArrowRepeatAll', FalseValue='ArrowRepeatAllOff'}}" />
     </ToggleButton>
   </Grid>
 </Window>

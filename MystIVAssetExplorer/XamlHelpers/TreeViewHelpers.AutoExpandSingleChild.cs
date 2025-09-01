@@ -2,13 +2,13 @@
 using Avalonia.Controls;
 using System;
 
-namespace MystIVAssetExplorer;
+namespace MystIVAssetExplorer.XamlHelpers;
 
-public static class TreeViewBehaviors
+public static class TreeViewHelpers
 {
     public static readonly AttachedProperty<bool> AutoExpandSingleChildProperty =
         AvaloniaProperty.RegisterAttached<TreeViewItem, bool>(
-            "AutoExpandSingleChild", typeof(TreeViewBehaviors));
+            "AutoExpandSingleChild", typeof(TreeViewHelpers));
 
     public static void SetAutoExpandSingleChild(AvaloniaObject element, bool value) =>
         element.SetValue(AutoExpandSingleChildProperty, value);
@@ -16,7 +16,7 @@ public static class TreeViewBehaviors
     public static bool GetAutoExpandSingleChild(AvaloniaObject element) =>
         element.GetValue(AutoExpandSingleChildProperty);
 
-    static TreeViewBehaviors()
+    static TreeViewHelpers()
     {
         AutoExpandSingleChildProperty.Changed.Subscribe(args =>
         {

@@ -1,10 +1,11 @@
 ﻿using Avalonia.Data.Converters;
+using Avalonia.Markup.Xaml;
 using System;
 using System.Globalization;
 
-namespace MystIVAssetExplorer;
+namespace MystIVAssetExplorer.XamlHelpers;
 
-public class FileSizeConverter : IValueConverter
+public class FileSizeConverter : MarkupExtension, IValueConverter
 {
     private readonly string[] suffixes = ["bytes", "KB", "MB", "GB", "TB"];
 
@@ -30,5 +31,10 @@ public class FileSizeConverter : IValueConverter
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotSupportedException();
+    }
+
+    public override object ProvideValue(IServiceProvider serviceProvider)
+    {
+        return this;
     }
 }
