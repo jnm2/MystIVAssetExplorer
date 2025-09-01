@@ -20,12 +20,12 @@
     <xh:ChildWindow ViewType="m4ae:AudioPlaybackWindow" Content="{Binding AudioPlaybackWindow}" />
   </xh:WindowHelpers.ChildWindows>
 
-  <Grid ColumnDefinitions="240, 4, *">
+  <Grid ColumnDefinitions="450, 4, *">
     <TreeView ItemsSource="{Binding AssetBrowserNodes}"
               SelectedItem="{Binding SelectedAssetBrowserNode}">
       <TreeView.ItemTemplate>
         <TreeDataTemplate ItemsSource="{Binding ChildNodes}">
-          <StackPanel  Orientation="Horizontal">
+          <StackPanel Orientation="Horizontal">
             <avalonia:FluentIcon Icon="Folder" Height="14" Padding="0 0 4 0" />
             <TextBlock Text="{Binding Name}" />
           </StackPanel>
