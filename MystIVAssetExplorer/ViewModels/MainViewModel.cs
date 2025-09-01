@@ -5,7 +5,6 @@ using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using MystIVAssetExplorer.Formats;
 using MystIVAssetExplorer.Formats.UbiObjects;
-using MystIVAssetExplorer.Services;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -22,8 +21,6 @@ public class MainViewModel : ViewModelBase, IDisposable
     private readonly M4bContainingFolder m4bContainingFolder;
     private readonly Dictionary<(uint SoundId, uint GroupId), string> sequenceSoundNames = new();
     private readonly Dictionary<string, M4bFile> soundDataFiles;
-    private readonly AudioService audioService = new();
-    private AssetFolderListingSoundStream? lastPlayedAsset;
 
     public ObservableCollection<AssetBrowserNode> AssetBrowserNodes { get; }
 
@@ -31,10 +28,18 @@ public class MainViewModel : ViewModelBase, IDisposable
 
     public ObservableCollection<AssetFolderListing> SelectedFolderListings { get; } = [];
 
+    public AudioPlaybackViewModel? AudioPlaybackWindow
+    {
+        get;
+        set
+        {
+            if (value is null) field?.Dispose();
+            this.RaiseAndSetIfChanged(ref field, value);
+        }
+    }
+
     public MainViewModel()
     {
-        audioService.PlaybackStopped += AudioService_PlaybackStopped;
-
         m4bContainingFolder = M4bReader.OpenM4bFolder(@"C:\Program Files (x86)\GOG Galaxy\Games\Myst 4\data");
 
         var soundM4b = m4bContainingFolder.Archives.Single(a => a.Name == "sound.m4b");
@@ -152,13 +157,6 @@ public class MainViewModel : ViewModelBase, IDisposable
 
     private async Task PlayAsync(DataGrid dataGrid)
     {
-        if (IsPlaying)
-        {
-            audioService.Pause();
-            IsPlaying = false;
-            return;
-        }
-
         var window = (Window)dataGrid.GetVisualRoot()!;
 
         var soundAsset = SelectedFolderListings.OfType<AssetFolderListingSoundStream>().FirstOrDefault();
@@ -169,30 +167,20 @@ public class MainViewModel : ViewModelBase, IDisposable
             return;
         }
 
-        if (lastPlayedAsset == soundAsset)
+        if (soundAsset.SoundStream.Format is not (SoundStreamFormat.PCM or SoundStreamFormat.OggVorbis))
         {
-            audioService.Play();
-            IsPlaying = true;
+            await MessageBoxManager.GetMessageBoxStandard("Play", "This audio format is not currently supported.", ButtonEnum.Ok, Icon.Error, WindowStartupLocation.CenterOwner)
+                .ShowWindowDialogAsync(window);
             return;
         }
-
-        lastPlayedAsset = soundAsset;
 
         var stream = new MemoryStream();
         await soundAsset.ExportToStreamAsync(stream);
         stream.Position = 0;
 
-        audioService.SetAudioFile(stream, soundAsset.SoundStream.Format);
-        audioService.Play();
-        IsPlaying = true;
+        AudioPlaybackWindow ??= new();
+        AudioPlaybackWindow.SwitchAudioFile(soundAsset.Name, stream, soundAsset.SoundStream.Format);
     }
-
-    private void AudioService_PlaybackStopped(object? sender, EventArgs e)
-    {
-        IsPlaying = false;
-    }
-
-    public bool IsPlaying { get; private set => this.RaiseAndSetIfChanged(ref field, value); }
 
     public void Dispose()
     {

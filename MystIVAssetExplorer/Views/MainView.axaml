@@ -5,6 +5,7 @@
              xmlns:vm="clr-namespace:MystIVAssetExplorer.ViewModels"
              xmlns:m4ae="clr-namespace:MystIVAssetExplorer"
              xmlns:avalonia="clr-namespace:FluentIcons.Avalonia;assembly=FluentIcons.Avalonia"
+             xmlns:xh="clr-namespace:MystIVAssetExplorer.XamlHelpers"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MystIVAssetExplorer.Views.MainView"
              x:DataType="vm:MainViewModel"
@@ -16,8 +17,12 @@
   </Design.DataContext>
 
   <UserControl.Resources>
-      <m4ae:FileSizeConverter x:Key="FileSizeConverter"/>
+    <m4ae:FileSizeConverter x:Key="FileSizeConverter"/>
   </UserControl.Resources>
+
+  <xh:ChildWindowViewModels.ChildWindows>
+    <xh:ChildWindow ViewType="m4ae:AudioPlaybackWindow" Content="{Binding AudioPlaybackWindow}" />
+  </xh:ChildWindowViewModels.ChildWindows>
 
   <Grid ColumnDefinitions="240, 4, *">
     <TreeView ItemsSource="{Binding AssetBrowserNodes}"
@@ -55,9 +60,9 @@
                 CommandParameter="{Binding ElementName=FolderListing}">
           <TextBlock>
             <InlineUIContainer>
-              <avalonia:FluentIcon Icon="{Binding IsPlaying, Converter={m4ae:BoolToObjectConverter TrueValue='Pause', FalseValue='Play'}}" Height="16" />
+              <avalonia:FluentIcon Icon="Play" Height="16" />
             </InlineUIContainer>
-            <Run Text="{Binding IsPlaying, Converter={m4ae:BoolToObjectConverter TrueValue='Pause', FalseValue='Play'}}" />
+            <Run Text="Play" />
           </TextBlock>
         </Button>
       </StackPanel>
