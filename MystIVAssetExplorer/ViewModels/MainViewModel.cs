@@ -24,7 +24,21 @@ public class MainViewModel : ViewModelBase, IDisposable
 
     public ObservableCollection<AssetBrowserNode> AssetBrowserNodes { get; }
 
-    public AssetBrowserNode? SelectedAssetBrowserNode { get; set => this.RaiseAndSetIfChanged(ref field, value); }
+    public AssetBrowserNode? SelectedAssetBrowserNode
+    {
+        get;
+        set
+        {
+            var isChanging = field != value;
+            this.RaiseAndSetIfChanged(ref field, value);
+            if (isChanging)
+            {
+                SelectedFolderListings.Clear();
+                if (value is { FolderListing: [var first, ..] })
+                    SelectedFolderListings.Add(first);
+            }
+        }
+    }
 
     public ObservableCollection<AssetFolderListing> SelectedFolderListings { get; } = [];
 
@@ -73,7 +87,7 @@ public class MainViewModel : ViewModelBase, IDisposable
         ExportCommand = ReactiveCommand.CreateFromTask((DataGrid grid) => ExportAsync(grid));
         PlayCommand = ReactiveCommand.CreateFromTask((DataGrid grid) => PlayAsync(grid));
 
-        FindInFileName("PAD_Play_MU_TO_02B_pad");
+        FindInFileName("mu_music.sb0 stream 0");
     }
 
     private void FindInFileName(string text)
