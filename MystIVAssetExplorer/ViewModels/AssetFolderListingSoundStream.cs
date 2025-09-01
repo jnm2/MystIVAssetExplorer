@@ -19,6 +19,12 @@ public class AssetFolderListingSoundStream(string name, SoundStream soundStream,
 
     public string GetExportFileName()
     {
-        return Path.ChangeExtension(Name, SoundStream.GetStandaloneFileExtension());
+        // Only find three- or four-character extensions
+        var extensionSeparator = Name.LastIndexOf('.', Name.Length - 4, count: 2);
+        var withoutExtension = extensionSeparator != -1
+            ? Name[..extensionSeparator]
+            : Name;
+
+        return withoutExtension + SoundStream.GetStandaloneFileExtension();
     }
 }
