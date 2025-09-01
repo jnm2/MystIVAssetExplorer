@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MystIVAssetExplorer.Memory;
+using System;
 using System.IO.MemoryMappedFiles;
 
 namespace MystIVAssetExplorer.Formats;
