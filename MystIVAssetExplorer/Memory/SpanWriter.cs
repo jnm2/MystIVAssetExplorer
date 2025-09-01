@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Buffers.Binary;
 
-namespace MystIVAssetExplorer;
+namespace MystIVAssetExplorer.Memory;
 
 public ref struct SpanWriter(Span<byte> span)
 {

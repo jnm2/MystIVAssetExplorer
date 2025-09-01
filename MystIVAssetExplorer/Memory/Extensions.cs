@@ -1,6 +1,6 @@
 ﻿using System.IO.MemoryMappedFiles;
 
-namespace MystIVAssetExplorer;
+namespace MystIVAssetExplorer.Memory;
 
 internal static class Extensions
 {
