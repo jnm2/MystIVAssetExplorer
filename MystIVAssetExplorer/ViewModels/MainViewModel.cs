@@ -52,42 +52,53 @@ public class MainViewModel : ViewModelBase, IDisposable
         }
     }
 
+    public string WindowTitle { get; set => this.RaiseAndSetIfChanged(ref field, value); }
+
     public MainViewModel()
     {
-        m4bContainingFolder = M4bReader.OpenM4bFolder(@"C:\Program Files (x86)\GOG Galaxy\Games\Myst 4\data");
+        var dataDirectory = MystIVHelpers.DetectDataDirectory();
+        WindowTitle = "Myst IV Asset Explorer - " + (dataDirectory ?? "Myst IV data files not found");
 
-        var soundM4b = m4bContainingFolder.Archives.Single(a => a.Name == "sound.m4b");
-
-        foreach (var seqFile in soundM4b.Subdirectories.Single(d => d.Name == "sequence").Files)
+        if (dataDirectory is not null)
         {
-            var binaryReader = new UbiBinaryReader(seqFile.Memory.Span);
-            binaryReader.ExpectString(UbiSndSequence.UbiClassName);
-            var sequence = UbiSndSequence.DeserializeContents(ref binaryReader);
+            m4bContainingFolder = M4bReader.OpenM4bFolder(dataDirectory);
 
-            foreach (var sound in sequence.Sounds)
-                sequenceSoundNames.Add((sound.SoundId, sound.GroupId), sound.Name);
-        }
+            var soundM4b = m4bContainingFolder.Archives.Single(a => a.Name == "sound.m4b");
 
-        var language = m4bContainingFolder.Subfolders.Single();
-
-        soundDataFiles = (
-            from directory in new[]
+            foreach (var seqFile in soundM4b.Subdirectories.Single(d => d.Name == "sequence").Files)
             {
+                var binaryReader = new UbiBinaryReader(seqFile.Memory.Span);
+                binaryReader.ExpectString(UbiSndSequence.UbiClassName);
+                var sequence = UbiSndSequence.DeserializeContents(ref binaryReader);
+
+                foreach (var sound in sequence.Sounds)
+                    sequenceSoundNames.Add((sound.SoundId, sound.GroupId), sound.Name);
+            }
+
+            var language = m4bContainingFolder.Subfolders.Single();
+
+            soundDataFiles = (
+                from directory in new[]
+                {
                 soundM4b.Subdirectories.Single(d => d.Name == "data"),
                 language.Archives.Single(a => a.Name == "sound.m4b")
                     .Subdirectories.Single(d => d.Name == "data")
                     .Subdirectories.Single(d => d.Name == language.Name),
-            }
-            from file in directory.Files
-            where !file.Name.EndsWith(".sb0", StringComparison.OrdinalIgnoreCase)
-            select file).ToDictionary(f => f.Name, StringComparer.OrdinalIgnoreCase);
+                }
+                from file in directory.Files
+                where !file.Name.EndsWith(".sb0", StringComparison.OrdinalIgnoreCase)
+                select file).ToDictionary(f => f.Name, StringComparer.OrdinalIgnoreCase);
 
-        AssetBrowserNodes = CreateNodes(m4bContainingFolder);
+            AssetBrowserNodes = CreateNodes(m4bContainingFolder);
+            FindInFileName("mu_music.sb0 stream 0");
+        }
+        else
+        {
+            AssetBrowserNodes = [];
+        }
 
         ExportCommand = ReactiveCommand.CreateFromTask((DataGrid grid) => ExportAsync(grid));
         PlayCommand = ReactiveCommand.CreateFromTask((DataGrid grid) => PlayAsync(grid));
-
-        FindInFileName("mu_music.sb0 stream 0");
     }
 
     private void FindInFileName(string text)
