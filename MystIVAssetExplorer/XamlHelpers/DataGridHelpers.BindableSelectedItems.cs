@@ -1,4 +1,4 @@
-﻿namespace MystIVAssetExplorer;
+﻿namespace MystIVAssetExplorer.XamlHelpers;
 
 using Avalonia;
 using Avalonia.Controls;
@@ -6,11 +6,11 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 
-public static class DataGridProperties
+public static class DataGridHelpers
 {
     public static readonly AttachedProperty<IList?> BindableSelectedItemsProperty =
         AvaloniaProperty.RegisterAttached<DataGrid, IList?>(
-            "BindableSelectedItems", typeof(DataGridProperties));
+            "BindableSelectedItems", typeof(DataGridHelpers));
 
     public static void SetBindableSelectedItems(DataGrid grid, IList? value) =>
         grid.SetValue(BindableSelectedItemsProperty, value);
@@ -18,7 +18,7 @@ public static class DataGridProperties
     public static IList? GetBindableSelectedItems(DataGrid grid) =>
         grid.GetValue(BindableSelectedItemsProperty);
 
-    static DataGridProperties()
+    static DataGridHelpers()
     {
         BindableSelectedItemsProperty.Changed.AddClassHandler<DataGrid>((grid, e) =>
         {

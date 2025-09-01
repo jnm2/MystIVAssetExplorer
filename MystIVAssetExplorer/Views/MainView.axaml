@@ -16,13 +16,9 @@
     <vm:MainViewModel />
   </Design.DataContext>
 
-  <UserControl.Resources>
-    <m4ae:FileSizeConverter x:Key="FileSizeConverter"/>
-  </UserControl.Resources>
-
-  <xh:ChildWindowViewModels.ChildWindows>
+  <xh:WindowHelpers.ChildWindows>
     <xh:ChildWindow ViewType="m4ae:AudioPlaybackWindow" Content="{Binding AudioPlaybackWindow}" />
-  </xh:ChildWindowViewModels.ChildWindows>
+  </xh:WindowHelpers.ChildWindows>
 
   <Grid ColumnDefinitions="240, 4, *">
     <TreeView ItemsSource="{Binding AssetBrowserNodes}"
@@ -37,7 +33,7 @@
       </TreeView.ItemTemplate>
       <TreeView.Styles>
         <Style Selector="TreeViewItem">
-          <Setter Property="m4ae:TreeViewBehaviors.AutoExpandSingleChild" Value="True" />
+          <Setter Property="xh:TreeViewHelpers.AutoExpandSingleChild" Value="True" />
           <Setter Property="IsExpanded" Value="{Binding (vm:AssetBrowserNode).IsExpanded}"></Setter>
           <Setter Property="MinHeight" Value="20" />
         </Style>
@@ -70,10 +66,10 @@
                 Name="FolderListing"
                 ItemsSource="{Binding SelectedAssetBrowserNode.FolderListing}"
                 IsReadOnly="True"
-                m4ae:DataGridProperties.BindableSelectedItems="{Binding SelectedFolderListings}">
+                xh:DataGridHelpers.BindableSelectedItems="{Binding SelectedFolderListings}">
         <DataGrid.Columns>
           <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" />
-          <DataGridTextColumn Header="Size" Binding="{Binding Size, Converter={StaticResource FileSizeConverter}, Mode=OneWay}" />
+          <DataGridTextColumn Header="Size" Binding="{Binding Size, Converter={xh:FileSizeConverter}, Mode=OneWay}" />
         </DataGrid.Columns>
         <DataGrid.Styles>
           <Style Selector="DataGridCell">

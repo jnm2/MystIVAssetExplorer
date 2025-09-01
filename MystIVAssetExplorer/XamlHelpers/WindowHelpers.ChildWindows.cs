@@ -8,12 +8,12 @@ using System.Collections.Specialized;
 
 namespace MystIVAssetExplorer.XamlHelpers;
 
-public static class ChildWindowViewModels
+public static partial class WindowHelpers
 {
     public static readonly AttachedProperty<AvaloniaList<ChildWindow>> ChildWindowsProperty =
         AvaloniaProperty.RegisterAttached<Visual, AvaloniaList<ChildWindow>>(
             "ChildWindows",
-            typeof(ChildWindowViewModels));
+            typeof(WindowHelpers));
 
     private static readonly Dictionary<ChildWindow, Window> OpenWindows = new();
 
@@ -28,26 +28,21 @@ public static class ChildWindowViewModels
         return value;
     }
 
-    static ChildWindowViewModels()
+    private static void OnChildWindowsPropertyChanged(AvaloniaPropertyChangedEventArgs<AvaloniaList<ChildWindow>> args)
     {
-        ChildWindowsProperty.Changed.Subscribe(args =>
+        args.NewValue.Value.CollectionChanged += (_, e) =>
         {
-            args.NewValue.Value.CollectionChanged += (_, e) =>
-            {
-                if (e.Action != NotifyCollectionChangedAction.Add)
-                    throw new NotImplementedException();
+            if (e.Action != NotifyCollectionChangedAction.Add) throw new NotImplementedException();
 
-                foreach (ChildWindow item in e.NewItems!)
+            foreach (ChildWindow item in e.NewItems!)
+            {
+                item.PropertyChanged += (_, e) =>
                 {
-                    item.PropertyChanged += (_, e) =>
-                    {
-                        if (e.Property == ChildWindow.ContentProperty)
-                            UpdateContent((Visual)args.Sender, item);
-                    };
-                    UpdateContent((Visual)args.Sender, item);
-                }
-            };
-        });
+                    if (e.Property == ChildWindow.ContentProperty) UpdateContent((Visual)args.Sender, item);
+                };
+                UpdateContent((Visual)args.Sender, item);
+            }
+        };
     }
 
     private static void UpdateContent(Visual owner, ChildWindow childWindow)
