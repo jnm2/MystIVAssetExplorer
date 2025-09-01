@@ -18,9 +18,9 @@ namespace MystIVAssetExplorer.ViewModels;
 
 public class MainViewModel : ViewModelBase, IDisposable
 {
-    private readonly M4bContainingFolder m4bContainingFolder;
+    private readonly M4bContainingFolder? m4bContainingFolder;
     private readonly Dictionary<(uint SoundId, uint GroupId), string> sequenceSoundNames = new();
-    private readonly Dictionary<string, M4bFile> soundDataFiles;
+    private readonly Dictionary<string, M4bFile>? soundDataFiles;
 
     public ObservableCollection<AssetBrowserNode> AssetBrowserNodes { get; }
 
@@ -209,7 +209,7 @@ public class MainViewModel : ViewModelBase, IDisposable
 
     public void Dispose()
     {
-        m4bContainingFolder.Dispose();
+        m4bContainingFolder?.Dispose();
     }
 
     public ReactiveCommand<DataGrid, Unit> ExportCommand { get; }
@@ -285,7 +285,7 @@ public class MainViewModel : ViewModelBase, IDisposable
                     return (AssetFolderListing)new AssetFolderListingSoundStream(
                         name,
                         soundStream,
-                        soundStream.ReferencesExternalDataFile ? soundDataFiles[soundStream.DataFileName] : null);
+                        soundStream.ReferencesExternalDataFile ? soundDataFiles![soundStream.DataFileName] : null);
                 })
                 ?? [new AssetFolderListingMessage("(Sound stream entry type not yet supported)")]],
         };
