@@ -8,7 +8,7 @@ namespace MystIVAssetExplorer.Formats;
 
 public sealed record Sb0File(ImmutableArray<SoundStream> SoundStreams)
 {
-    public static Sb0File Deserialize(ReadOnlyMemory<byte> memory)
+    public static Sb0File? Deserialize(ReadOnlyMemory<byte> memory)
     {
         var reader = new SpanReader(memory.Span);
 
@@ -50,7 +50,7 @@ public sealed record Sb0File(ImmutableArray<SoundStream> SoundStreams)
             var streamId = reader.ReadUInt16LittleEndian();
             var groupId = reader.ReadUInt16LittleEndian();
             var entryType = reader.ReadInt32LittleEndian();
-            if (entryType != 1) throw new NotSupportedException($"Entry type {entryType} is not yet supported");
+            if (entryType != 1) return null;
             var length = reader.ReadInt32LittleEndian();
             if (reader.ReadInt32LittleEndian() != 0) throw new NotImplementedException("Expected 0");
             var offset = reader.ReadInt32LittleEndian();
