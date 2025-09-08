@@ -192,19 +192,12 @@ public class MainViewModel : ViewModelBase, IDisposable
             return;
         }
 
-        if (soundAsset.SoundStream.Format is not (SoundStreamFormat.PCM or SoundStreamFormat.OggVorbis))
-        {
-            await MessageBoxManager.GetMessageBoxStandard("Play", "This audio format is not currently supported.", ButtonEnum.Ok, Icon.Error, WindowStartupLocation.CenterOwner)
-                .ShowWindowDialogAsync(window);
-            return;
-        }
-
         var stream = new MemoryStream();
         await soundAsset.ExportToStreamAsync(stream);
         stream.Position = 0;
 
         AudioPlaybackWindow ??= new();
-        AudioPlaybackWindow.SwitchAudioFile(soundAsset.Name, stream, soundAsset.SoundStream.Format);
+        AudioPlaybackWindow.SwitchAudioFile(soundAsset.Name, stream, soundAsset.SoundStream.GetExportFormat());
     }
 
     public void Dispose()

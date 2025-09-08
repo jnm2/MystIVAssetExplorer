@@ -25,6 +25,6 @@ public class AssetFolderListingSoundStream(string name, SoundStream soundStream,
             ? Name[..extensionSeparator]
             : Name;
 
-        return withoutExtension + SoundStream.GetStandaloneFileExtension();
+        return withoutExtension + SoundStream.GetStandaloneExportFileExtension();
     }
 }
