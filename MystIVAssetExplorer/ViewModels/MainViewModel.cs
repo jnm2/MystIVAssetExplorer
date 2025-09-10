@@ -261,6 +261,7 @@ public class MainViewModel : ViewModelBase, IDisposable
 
     private FileBasedAssetBrowserNode CreateSb0Node(M4bFile m4bFile)
     {
+        if (m4bFile.Name == "ambiance_achenar_amb_ac_herbivore_amulet_flash.sb0") { }
         var sb0File = Sb0File.Deserialize(m4bFile.Memory);
 
         return new FileBasedAssetBrowserNode
@@ -281,7 +282,7 @@ public class MainViewModel : ViewModelBase, IDisposable
                     return (AssetFolderListing)new AssetFolderListingSoundStream(
                         name,
                         soundStream,
-                        soundStream.ReferencesExternalDataFile ? soundDataFiles![soundStream.DataFileName] : null);
+                        soundStream.ReferencesExternalDataFile ? soundDataFiles!.GetValueOrDefault(soundStream.DataFileName) : null);
                 })
                 ?? [new AssetFolderListingMessage("(Sound stream entry type not yet supported)")]],
         };

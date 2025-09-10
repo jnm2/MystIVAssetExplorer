@@ -1,9 +1,9 @@
-﻿using System;
+﻿using MystIVAssetExplorer.Memory;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using MystIVAssetExplorer.Memory;
 
 namespace MystIVAssetExplorer.Formats;
 
@@ -51,6 +51,12 @@ public sealed record Sb0File(ImmutableArray<SoundStream> SoundStreams)
             var streamId = reader.ReadUInt16LittleEndian();
             var groupId = reader.ReadUInt16LittleEndian();
             var entryType = reader.ReadInt32LittleEndian();
+            if (entryType == 2)
+            {
+                _ = reader.ReadSpan(156);
+                continue;
+            }
+
             if (entryType != 1) return null;
             var length = reader.ReadInt32LittleEndian();
             if (reader.ReadInt32LittleEndian() != 0) throw new NotImplementedException("Expected 0");
@@ -100,14 +106,18 @@ public sealed record Sb0File(ImmutableArray<SoundStream> SoundStreams)
             if (!referencesExternalDataFile && !containsOwnAudioData)
                 throw new NotImplementedException("The header claims the file has no audio data of its own, but the stream entry claims to reference some.");
 
-            var soundIds = soundIdsByStreamIndex[i];
-            if (soundIds is null)
-                throw new NotImplementedException("Unused stream");
+            var soundIds = soundIdsByStreamIndex[i] ?? [];
 
             if (soundIds.Any(id => id.GroupId != groupId))
                 throw new NotImplementedException("Sounds and stream are in different groups");
 
             soundStreams.Add(new SoundStream(streamId, groupId, [.. soundIds.Select(id => id.SoundId)], referencesExternalDataFile, name, Data: null, length, offset, byteRate, sampleRate, bitsPerSample, channelCount, format));
+        }
+
+        for (var i = 0; i < streamCount; i++)
+        {
+            if (soundIdsByStreamIndex[i] is null)
+                if (reader.ReadInt32LittleEndian() != i) throw new NotImplementedException("Expected " + i);
         }
 
         if (containsOwnAudioData)
@@ -128,6 +138,6 @@ public sealed record Sb0File(ImmutableArray<SoundStream> SoundStreams)
             }
         }
 
-        return new Sb0File(soundStreams.MoveToImmutable());
+        return new Sb0File(soundStreams.DrainToImmutable());
     }
 }
