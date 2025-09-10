@@ -1,4 +1,7 @@
-﻿namespace MystIVAssetExplorer.ViewModels;
+﻿using System.IO;
+using System.Threading.Tasks;
+
+namespace MystIVAssetExplorer.ViewModels;
 
 public class AssetFolderListingSubfolder(AssetBrowserNode node) : AssetFolderListing
 {

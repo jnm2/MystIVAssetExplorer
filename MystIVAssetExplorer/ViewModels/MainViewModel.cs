@@ -90,7 +90,7 @@ public class MainViewModel : ViewModelBase, IDisposable
                 select file).ToDictionary(f => f.Name, StringComparer.OrdinalIgnoreCase);
 
             AssetBrowserNodes = CreateNodes(m4bContainingFolder);
-            FindInFileName("mu_music.sb0 stream 0");
+            FindInFileName("journal_w1_w5_z02_n032.sb0");
         }
         else
         {
@@ -252,17 +252,20 @@ public class MainViewModel : ViewModelBase, IDisposable
             Name = directory.Name,
             ChildNodes = childNodes,
             FolderListing = [
-                .. childNodes.Select(node => new AssetFolderListingSubfolder(node)),
+                .. childNodes.Select(AssetFolderListing (node) => node is FileBasedAssetBrowserNode fileNode
+                    ? new AssetFolderListingFile(fileNode.File)
+                    : new AssetFolderListingSubfolder(node)),
                 .. files],
         };
     }
 
-    private AssetBrowserNode CreateSb0Node(M4bFile m4bFile)
+    private FileBasedAssetBrowserNode CreateSb0Node(M4bFile m4bFile)
     {
         var sb0File = Sb0File.Deserialize(m4bFile.Memory);
 
-        return new AssetBrowserNode
+        return new FileBasedAssetBrowserNode
         {
+            File = m4bFile,
             Name = m4bFile.Name,
             ChildNodes = [],
             FolderListing = [..
