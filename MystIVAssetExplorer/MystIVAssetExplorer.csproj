@@ -3,8 +3,6 @@
     <TargetFramework>net8.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-
-    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
