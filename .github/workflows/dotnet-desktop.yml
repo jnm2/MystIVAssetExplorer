@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request: ~
+  workflow_dispatch: ~
+
+jobs:
+  CI:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Build
+      run: dotnet publish MystIVAssetExplorer.Desktop -c Release -o artifacts/Bin /bl:artifacts/Logs/publish.binlog
+
+    - name: Upload bin artifact
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Bin
+        path: |
+          artifacts/Bin/**/*
+          !artifacts/Bin/**/*.pdb
+
+    - name: Upload symbols artifact
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Symbols
+        path: artifacts/Bin/**/*.pdb
+
+    - name: Upload logs artifact
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Logs
+        path: artifacts/Logs
