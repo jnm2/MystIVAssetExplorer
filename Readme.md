@@ -8,7 +8,7 @@ Browse and extract Myst IV game assets, and play audio assets in-app with gaples
 
 Make sure Myst IV is installed somewhere under your `Program Files (x86)` directory (or on a 32-bit operating system, `Program Files`). Myst IV Asset Explorer will autodetect the path to the `data\*.m4b` files.
 
-Download and run the .exe file from the latest release of Myst IV Asset Explorer from <https://github.com/jnm2/YouTubeDownloadTool/releases> and run it. If .NET 8 or newer is not installed, the app will take you to the download page for .NET 8.
+Download and run the .exe file from the latest release of Myst IV Asset Explorer from <https://github.com/jnm2/MystIVAssetExplorer/releases> and run it. If .NET 8 or newer is not installed, the app will take you to the download page for .NET 8.
 
 ## Audio
 
