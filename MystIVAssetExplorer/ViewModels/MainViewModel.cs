@@ -253,7 +253,7 @@ public class MainViewModel : ViewModelBase, IDisposable
             collection.Add(new AssetBrowserNode
             {
                 Name = subfolder.Name,
-                ChildNodes = CreateNodes(subfolder),
+                ChildNodes = childNodes,
                 FolderListing = [.. childNodes.Select(node => new AssetFolderListingSubfolder(node))],
                 IsExpanded = true,
             });
