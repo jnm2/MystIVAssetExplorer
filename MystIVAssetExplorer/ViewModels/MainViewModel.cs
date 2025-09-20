@@ -221,6 +221,8 @@ public class MainViewModel : ViewModelBase, IDisposable
                 await PlayAsync(soundAsset);
                 break;
             case ISubfolderListing subfolder:
+                if (SelectedAssetBrowserNode?.ChildNodes.Contains(subfolder.SubfolderNode) ?? false)
+                    SelectedAssetBrowserNode.IsExpanded = true;
                 SelectedAssetBrowserNode = subfolder.SubfolderNode;
                 break;
             case IExportableFolderListing exportable:
