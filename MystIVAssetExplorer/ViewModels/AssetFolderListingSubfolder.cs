@@ -1,12 +1,9 @@
-﻿using System.IO;
-using System.Threading.Tasks;
+﻿namespace MystIVAssetExplorer.ViewModels;
 
-namespace MystIVAssetExplorer.ViewModels;
-
-public class AssetFolderListingSubfolder(AssetBrowserNode node) : AssetFolderListing
+public class AssetFolderListingSubfolder(AssetBrowserNode subfolderNode) : AssetFolderListing, ISubfolderListing
 {
-    public AssetBrowserNode Node { get; } = node;
+    public AssetBrowserNode SubfolderNode { get; } = subfolderNode;
 
-    public override string Name => Node.Name;
+    public override string Name => SubfolderNode.Name;
     public override int? Size => null;
 }

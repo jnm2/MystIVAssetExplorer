@@ -220,8 +220,8 @@ public class MainViewModel : ViewModelBase, IDisposable
             case AssetFolderListingSoundStream soundAsset:
                 await PlayAsync(soundAsset);
                 break;
-            case AssetFolderListingSubfolder subfolder:
-                SelectedAssetBrowserNode = subfolder.Node;
+            case ISubfolderListing subfolder:
+                SelectedAssetBrowserNode = subfolder.SubfolderNode;
                 break;
             case IExportableFolderListing exportable:
                 await ExportAsync(window, [exportable]);
@@ -284,7 +284,7 @@ public class MainViewModel : ViewModelBase, IDisposable
             ChildNodes = childNodes,
             FolderListing = [
                 .. childNodes.Select(AssetFolderListing (node) => node is FileBasedAssetBrowserNode fileNode
-                    ? new AssetFolderListingFile(fileNode.File)
+                    ? new AssetFolderListingFileBasedSubfolder(fileNode)
                     : new AssetFolderListingSubfolder(node)),
                 .. files],
         };
