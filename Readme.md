@@ -51,7 +51,7 @@ For entries denoted with `†`, the file is language-specific and is found in th
 | 2. Yeesha's Joyride (1:03)              | ?                              | ?                                                  |
 | 3. Enter Tomahna (6:37)                 | `sequence_to_1a_full.sb0`      | `FULL_play_MU_TO_01A_full` (3:13, part 1)          |
 |                                         | `sequence_to_1b_full.sb0`      | `FULL_play_MU_TO_01B_full` (3:31, part 2)          |
-| 4. Darkness (2:59)                      | `sequence_to_2a.sb0`           | `PAD_Play_MU_TO_02A_pad` (2:53), with dozens of other short sounds from the same `.sb0` file overlaid—also, the _game_ asset is oddly present in the first 25 seconds of <https://cosmosis.bandcamp.com/track/spanish-gypsy>?? |
+| 4. Darkness (2:59)                      | `sequence_to_2a.sb0`           | `PAD_Play_MU_TO_02A_pad` (2:53), with dozens of other<br>short sounds from the same `.sb0` file overlaid—also,<br>the _game_ asset is oddly present in the first 25 seconds of<br><https://cosmosis.bandcamp.com/track/spanish-gypsy>?? |
 | 5. Achenar's Prelude (0:13)             | `video_w4_stream.sb0`†         | 258 (0:13, has game sounds over it)                |
 |                                         | `video_w1_stream.sb0`†         | 87 (0:15, similar, has game sounds over it)        |
 | 6. Jungle Landing (3:40)                | ?                              | ?                                                  |
