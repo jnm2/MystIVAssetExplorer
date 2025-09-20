@@ -80,6 +80,11 @@
           <Style Selector="DataGrid:focus DataGridCell:current /template/ Grid#FocusVisual">
             <Setter Property="IsVisible" Value="False" />
           </Style>
+					<Style Selector="DataGridRow" >
+						<Setter Property="xh:DataGridRowHelpers.DoubleTapped">
+							<xh:LateBoundCommand Binding="{Binding OpenCommand}" />
+						</Setter>
+					</Style>
         </DataGrid.Styles>
       </DataGrid>
     </Grid>

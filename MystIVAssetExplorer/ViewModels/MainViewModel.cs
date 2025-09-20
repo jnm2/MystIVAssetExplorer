@@ -99,6 +99,7 @@ public class MainViewModel : ViewModelBase, IDisposable
 
         ExportCommand = ReactiveCommand.CreateFromTask((DataGrid grid) => ExportAsync(grid));
         PlayCommand = ReactiveCommand.CreateFromTask((DataGrid grid) => PlayAsync(grid));
+        OpenCommand = ReactiveCommand.CreateFromTask((DataGridRow row) => OpenAsync(row));
     }
 
     private void FindInFileName(string text)
@@ -143,6 +144,11 @@ public class MainViewModel : ViewModelBase, IDisposable
             return;
         }
 
+        await ExportAsync(window, fileListings);
+    }
+
+    private async Task ExportAsync(Window window, IExportableFolderListing[] fileListings)
+    {
         if (fileListings is [var singleListing])
         {
             var exportFileName = singleListing.GetExportFileName();
@@ -192,12 +198,35 @@ public class MainViewModel : ViewModelBase, IDisposable
             return;
         }
 
+        await PlayAsync(soundAsset);
+    }
+
+    private async Task PlayAsync(AssetFolderListingSoundStream soundAsset)
+    {
         var stream = new MemoryStream();
         await soundAsset.ExportToStreamAsync(stream);
         stream.Position = 0;
 
         AudioPlaybackWindow ??= new();
         AudioPlaybackWindow.SwitchAudioFile(soundAsset.Name, stream, soundAsset.SoundStream.GetExportFormat());
+    }
+
+    private async Task OpenAsync(DataGridRow row)
+    {
+        var window = (Window)row.GetVisualRoot()!;
+
+        switch (row.DataContext)
+        {
+            case AssetFolderListingSoundStream soundAsset:
+                await PlayAsync(soundAsset);
+                break;
+            case AssetFolderListingSubfolder subfolder:
+                SelectedAssetBrowserNode = subfolder.Node;
+                break;
+            case IExportableFolderListing exportable:
+                await ExportAsync(window, [exportable]);
+                break;
+        }
     }
 
     public void Dispose()
@@ -208,6 +237,8 @@ public class MainViewModel : ViewModelBase, IDisposable
     public ReactiveCommand<DataGrid, Unit> ExportCommand { get; }
 
     public ReactiveCommand<DataGrid, Unit> PlayCommand { get; }
+
+    public ReactiveCommand<DataGridRow, Unit> OpenCommand { get; }
 
     private ObservableCollection<AssetBrowserNode> CreateNodes(M4bContainingFolder folder)
     {
