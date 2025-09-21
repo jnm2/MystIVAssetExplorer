@@ -3,7 +3,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using System;
 using System.Windows.Input;
 
 public static class DataGridRowHelpers

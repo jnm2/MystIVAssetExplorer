@@ -9,12 +9,9 @@ using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace MystIVAssetExplorer.ViewModels;
@@ -83,10 +80,10 @@ public class MainViewModel : ViewModelBase, IDisposable
             soundDataFiles = (
                 from directory in new[]
                 {
-                soundM4b.Subdirectories.Single(d => d.Name == "data"),
-                language.Archives.Single(a => a.Name == "sound.m4b")
-                    .Subdirectories.Single(d => d.Name == "data")
-                    .Subdirectories.Single(d => d.Name == language.Name),
+                    soundM4b.Subdirectories.Single(d => d.Name == "data"),
+                    language.Archives.Single(a => a.Name == "sound.m4b")
+                        .Subdirectories.Single(d => d.Name == "data")
+                        .Subdirectories.Single(d => d.Name == language.Name),
                 }
                 from file in directory.Files
                 where !file.Name.EndsWith(".sb0", StringComparison.OrdinalIgnoreCase)
