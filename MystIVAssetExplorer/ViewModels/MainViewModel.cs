@@ -9,9 +9,12 @@ using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace MystIVAssetExplorer.ViewModels;
@@ -190,15 +193,20 @@ public class MainViewModel : ViewModelBase, IDisposable
     {
         var window = (Window)dataGrid.GetVisualRoot()!;
 
-        var soundAsset = SelectedFolderListings.OfType<AssetFolderListingSoundStream>().FirstOrDefault();
-        if (soundAsset is null)
+        if (SelectedFolderListings.OfType<AssetFolderListingSoundStream>().FirstOrDefault() is { } soundAsset)
         {
-            await MessageBoxManager.GetMessageBoxStandard("Play", "Please select one or more sound files to play.", ButtonEnum.Ok, Icon.Error, WindowStartupLocation.CenterOwner)
-                .ShowWindowDialogAsync(window);
+            await PlayAsync(soundAsset);
             return;
         }
 
-        await PlayAsync(soundAsset);
+        if (SelectedFolderListings.OfType<AssetFolderListingFile>().FirstOrDefault(asset => asset.File.Name.EndsWith(".bik", StringComparison.OrdinalIgnoreCase)) is { } videoAsset)
+        {
+            await PlayVideoAsync(window, videoAsset);
+            return;
+        }
+
+        await MessageBoxManager.GetMessageBoxStandard("Play", "Please select one or more sound files to play.", ButtonEnum.Ok, Icon.Error, WindowStartupLocation.CenterOwner)
+            .ShowWindowDialogAsync(window);
     }
 
     private async Task PlayAsync(AssetFolderListingSoundStream soundAsset)
@@ -211,6 +219,18 @@ public class MainViewModel : ViewModelBase, IDisposable
         AudioPlaybackWindow.SwitchAudioFile(soundAsset.Name, stream, soundAsset.SoundStream.GetExportFormat());
     }
 
+    private async Task PlayVideoAsync(Window window, AssetFolderListingFile videoAsset)
+    {
+        var player = ExternalVideoPlayer.Detect();
+        if (player is null)
+        {
+            await MessageBoxManager.GetMessageBoxStandard("Play", "To play a video file, install VLC media player or ffmpeg.", ButtonEnum.Ok, Icon.Error, WindowStartupLocation.CenterOwner)
+                .ShowWindowDialogAsync(window);
+            return;
+        }
+        await player.PlayAsync(videoAsset.ExportToStreamAsync, options: new() { VideoName = videoAsset.Name });
+    }
+
     private async Task OpenAsync(DataGridRow row)
     {
         var window = (Window)row.GetVisualRoot()!;
@@ -219,6 +239,9 @@ public class MainViewModel : ViewModelBase, IDisposable
         {
             case AssetFolderListingSoundStream soundAsset:
                 await PlayAsync(soundAsset);
+                break;
+            case AssetFolderListingFile videoAsset when videoAsset.File.Name.EndsWith(".bik", StringComparison.OrdinalIgnoreCase):
+                await PlayVideoAsync(window, videoAsset);
                 break;
             case ISubfolderListing subfolder:
                 if (SelectedAssetBrowserNode?.ChildNodes.Contains(subfolder.SubfolderNode) ?? false)

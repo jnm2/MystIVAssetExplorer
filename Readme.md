@@ -20,7 +20,9 @@ The game's music is contained in `mu_music.sb0`, `music_personality_test.sb0`, a
 
 ## Video
 
-The game's video is contained in .bik files. These use the [Bink Video](https://en.wikipedia.org/wiki/Bink_Video) format. The exported files can be viewed with [ffmpeg (ffplay)](https://ffmpeg.org/ffplay.html) or [VLC](https://www.videolan.org/vlc/). The video files contain no audio and must be paired manually with an audio file described in the [Audio section](#audio). In-app video playback has not yet been investigated.
+The game's video is contained in .bik files. These use the [Bink Video](https://en.wikipedia.org/wiki/Bink_Video) format. The video files contain no audio.
+
+To view the video files, they can be exported and played with [ffmpeg (ffplay)](https://ffmpeg.org/ffplay.html) or [VLC](https://www.videolan.org/vlc/). You can also preview them from the app by double-clicking or clicking Play, if ffmpeg or VLC are installed on your system.
 
 ## Music not included in the soundtrack
 
