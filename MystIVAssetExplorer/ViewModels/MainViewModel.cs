@@ -5,6 +5,7 @@ using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using MystIVAssetExplorer.Formats;
 using MystIVAssetExplorer.Formats.UbiObjects;
+using MystIVAssetExplorer.Skybox;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace MystIVAssetExplorer.ViewModels;
@@ -29,14 +31,14 @@ public class MainViewModel : ViewModelBase, IDisposable
         get;
         set
         {
-            var isChanging = field != value;
+            if (field == value) return;
             this.RaiseAndSetIfChanged(ref field, value);
-            if (isChanging)
-            {
-                SelectedFolderListings.Clear();
-                if (value is { FolderListing: [var first, ..] })
-                    SelectedFolderListings.Add(first);
-            }
+
+            SelectedFolderListings.Clear();
+            if (field is { FolderListing: [var first, ..] })
+                SelectedFolderListings.Add(first);
+
+            UpdateSkyboxModel();
         }
     }
 
@@ -90,7 +92,7 @@ public class MainViewModel : ViewModelBase, IDisposable
                 select file).ToDictionary(f => f.Name, StringComparer.OrdinalIgnoreCase);
 
             AssetBrowserNodes = CreateNodes(m4bContainingFolder);
-            FindInFileName("journal_w1_w5_z02_n032.sb0");
+            FindInFileName("w1z03n050.m4b");
         }
         else
         {
@@ -262,6 +264,9 @@ public class MainViewModel : ViewModelBase, IDisposable
 
     public ReactiveCommand<DataGridRow, Unit> OpenCommand { get; }
 
+    private ILease<SkyboxModel>? nodeViewerBoxModelLease;
+    public ReferenceCountedDisposable<SkyboxModel>? NodeViewerSkyboxModel { get; private set => this.RaiseAndSetIfChanged(ref field, value); }
+
     private ObservableCollection<AssetBrowserNode> CreateNodes(M4bContainingFolder folder)
     {
         var collection = new ObservableCollection<AssetBrowserNode>();
@@ -338,5 +343,47 @@ public class MainViewModel : ViewModelBase, IDisposable
                 })
                 ?? [new AssetFolderListingMessage("(Sound stream entry type not yet supported)")]],
         };
+    }
+
+    private void UpdateSkyboxModel()
+    {
+        var originalBoxModelLease = nodeViewerBoxModelLease;
+
+        var imagesFolder = PickSkyboxImagesFolder(SelectedAssetBrowserNode);
+
+        NodeViewerSkyboxModel = imagesFolder is null
+            ? null
+            : new ReferenceCountedDisposable<SkyboxModel>(
+                SkyboxModel.FromImagesFolder(imagesFolder),
+                out nodeViewerBoxModelLease);
+
+        originalBoxModelLease?.Dispose();
+
+        static AssetBrowserNode? PickSkyboxImagesFolder(AssetBrowserNode? searchRoot)
+        {
+            // The folder is literally open (and may not be layer_default)
+            if (searchRoot?.Parent?.FolderListing.Any(l => l.Name.Equals("cube.dsc", StringComparison.OrdinalIgnoreCase)) ?? false)
+                return searchRoot;
+
+            // A parent folder may have been selected. We should be able to find a unique "set_default" folder under this node.
+            var searchPredicates = new Func<AssetBrowserNode, bool>[]
+            {
+                node => Regex.IsMatch(node.Name, @"^w\dz\d{2}n\d{3}\.m4b$", RegexOptions.IgnoreCase),
+                node => node.Name.Equals("cube", StringComparison.OrdinalIgnoreCase),
+                node => node.Name.Equals("layer_default.m4b", StringComparison.OrdinalIgnoreCase),
+            };
+
+            var searchCandidates = searchRoot!.ChildNodes;
+
+            foreach (var searchPredicate in searchPredicates)
+            {
+                if (searchCandidates.TrySingle(searchPredicate, out var foundNode))
+                    searchCandidates = foundNode.ChildNodes;
+            }
+
+            return searchCandidates.TrySingle(n => n.Name.Equals("set_default", StringComparison.OrdinalIgnoreCase), out var setDefaultNode)
+                ? setDefaultNode
+                : null;
+        }
     }
 }

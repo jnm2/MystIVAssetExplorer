@@ -3,10 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:MystIVAssetExplorer.ViewModels"
+             xmlns:sky="clr-namespace:MystIVAssetExplorer.Skybox"
              xmlns:m4ae="clr-namespace:MystIVAssetExplorer"
              xmlns:avalonia="clr-namespace:FluentIcons.Avalonia;assembly=FluentIcons.Avalonia"
              xmlns:xh="clr-namespace:MystIVAssetExplorer.XamlHelpers"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="450"
              x:Class="MystIVAssetExplorer.Views.MainView"
              x:DataType="vm:MainViewModel"
              FontSize="12">
@@ -18,7 +19,7 @@
     <xh:ChildWindow ViewType="m4ae:AudioPlaybackWindow" Content="{Binding AudioPlaybackWindow}" />
   </xh:WindowHelpers.ChildWindows>
 
-  <Grid ColumnDefinitions="450, 4, *">
+  <Grid ColumnDefinitions="450, 4, 350, 4, *">
     <TreeView ItemsSource="{Binding AssetBrowserNodes}"
               SelectedItem="{Binding SelectedAssetBrowserNode}">
       <TreeView.ItemTemplate>
@@ -88,5 +89,7 @@
         </DataGrid.Styles>
       </DataGrid>
     </Grid>
+		<GridSplitter Grid.Column="3" Background="Gray" ResizeDirection="Columns" />
+		<sky:SkyboxControl Grid.Column="4" SkyboxModel="{Binding NodeViewerSkyboxModel}"/>
   </Grid>
 </UserControl>

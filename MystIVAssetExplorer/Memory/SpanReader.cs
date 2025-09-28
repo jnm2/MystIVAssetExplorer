@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Buffers.Binary;
+using System.IO;
+using System.Text;
 
 namespace MystIVAssetExplorer.Memory;
 
@@ -47,5 +49,16 @@ public ref struct SpanReader(ReadOnlySpan<byte> span)
         var value = Span[..byteCount];
         Span = Span[byteCount..];
         return value;
+    }
+
+    public void ExpectString(ReadOnlySpan<byte> bytes)
+    {
+        if (bytes.Length > Span.Length)
+            throw new InvalidDataException($"Expected '{Encoding.UTF8.GetString(bytes)}' but found '{Encoding.UTF8.GetString(Span)}'");
+
+        if (!Span[..bytes.Length].SequenceEqual(bytes))
+            throw new InvalidDataException($"Expected '{Encoding.UTF8.GetString(bytes)}' but found '{Encoding.UTF8.GetString(Span[..bytes.Length])}'");
+
+        Span = Span[bytes.Length..];
     }
 }
