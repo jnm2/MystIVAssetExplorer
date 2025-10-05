@@ -17,7 +17,7 @@ jobs:
         fetch-depth: 0
 
     - name: Build
-      run: dotnet publish MystIVAssetExplorer.Desktop -c Release -o artifacts/Bin /bl:artifacts/Logs/publish.binlog
+      run: .\build.ps1
 
     - name: Upload bin artifact
       if: always()
