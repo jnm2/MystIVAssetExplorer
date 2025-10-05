@@ -47,11 +47,14 @@ To view the video files, they can be exported and played with [ffmpeg (ffplay)](
 - Same thing, but instrumental (used for credits?): `sequence_sa_3_instrumental.sb0` stream `Instrumental_MU_SA_03_PG_Instrumental`
 - Tomahna: `sequence_to_2b_full.sb0` stream `FULL_Play_MU_TO_02B_FULL`
 - Spire: `sequence_sp_2a.sb0` stream 47
+- Spire, taking ship to other island: `sfx_sirrus_w3_z02_n500.sb0` stream 633
 - Haven: `sequence_hn_1d_full.sb0` stream `FULL_Play_MU_HN_01D_full`
 - Serenia "personality test" vocals: `music_personality_test.sb0` streams 0-5
 - Cyan logo tune: `logo_cyan.sb0`
 - Intro video audio, speech on top of the Main Theme track (the menu background music): `<language>/sound.m4b/data/<language>/video_w6_stream.sb0` stream 7
 - Others?
+
+Not music, but Myst IV's version of the linking sound is `transition_sfx_gl_travelling_effect.sb0` stream `SFX_GL_Travelling_Effect.IMA`.
 
 ## Soundtrack music and variants
 
@@ -72,7 +75,7 @@ For entries denoted with `†`, the file is language-specific and is found in th
 | 4. Darkness (2:59)                      | `sequence_to_2a.sb0`           | `PAD_Play_MU_TO_02A_pad` (2:53), with dozens of other<br>short sounds from the same `.sb0` file overlaid—also,<br>the _game_ asset is oddly present in the first 25 seconds of<br><https://cosmosis.bandcamp.com/track/spanish-gypsy>?? |
 | 5. Achenar's Prelude (0:13)             | `video_w4_stream.sb0`†         | 258 (0:13, has game sounds over it)                |
 |                                         | `video_w1_stream.sb0`†         | 87 (0:15, similar, has game sounds over it)        |
-| 6. Jungle Landing (3:40)                | ?                              | ?                                                  |
+| 6. Jungle Landing (3:40)                | `sfx_achenar_w2_z02_n190.sb0`  | 107 (0:44, has game sounds over it)                |
 |                                         | `sequence_hn_1a_full.sb0`      | `FULL_Play_MU_HN_01A_full` (3:14, part 2)          |
 |                                         | `sequence_hn_1_full.sb0`       | `FULL_Play_MU_HN_01_full` (3:08, part 2 alternate) |
 | 7. The Swamp (2:25)                     | `sequence_hn_1b_full.sb0`      | `FULL_Play_MU_HN_01B_full` (3:38)                  |
@@ -88,7 +91,7 @@ For entries denoted with `†`, the file is language-specific and is found in th
 | 14. Sirrus Defends/Sirrus' rage (2:31)  | `video_w4_stream.sb0`†         | 234 (1:30, part 1, has speech over it)             |
 |                                         | `video_w3_stream.sb0`†         | 22 (1:05, part 2, has speech over it)              |
 | 15. Nearest Island (2:52)               | `sequence_sp_3_full.sb0`       | `FULL_Play_MU_SP_03_full` (3:08)                   |
-| 16. Leaving Spire (1:00)                | ?                              | ?                                                  |
+| 16. Leaving Spire (1:00)                | `sfx_sirrus_w3_z06_n070.sb0`   | 97 (0:59, has game sounds over it)                 |
 | 17. Enter Serenia (3:11)                | `sequence_sa_1_full.sb0`       | `FULL_Play_MU_SA_01_full` (3:10)                   |
 |                                         | `sequence_sa_1_instrument.sb0` | `INSTRUMENT_Play_MU_SA_01_instr` (3:10, alternate) |
 | 18. The Monastery (2:12)                | `sequence_sa_2_full.sb0`       | `FULL_Play_MU_SA_02_full` (2:10)                   |
