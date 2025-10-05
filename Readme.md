@@ -10,7 +10,7 @@ Download and run the .exe file from the latest release of Myst IV Asset Explorer
 
 ## 360° viewer
 
-![App screenshot showing in-app browsing panes and audio player](docs/images/screenshot-360.png)
+![App screenshot showing 360° node viewer](docs/images/screenshot-360.png)
 
 To explore the layers of the nodes for the game, expand the `data.m4b/global/w#/z##` folders and click on various `n###` folders which define the nodes of the game.
 
@@ -20,7 +20,7 @@ Some nodes are not rotatable in the game, so there is only one face and rotating
 
 Clicking a node folder chooses the `cube/layer_default.m4b/set_default` subfolder by default, but you can view other specialized layers by expanding the `cube` folder and picking other leaf folders:
 
-![App screenshot showing 360° node viewer](docs/images/node-subfolders.png)
+![App screenshot showing node layer subfolder](docs/images/node-subfolders.png)
 
 ## Audio
 
