@@ -72,26 +72,26 @@ For entries denoted with `†`, the file is language-specific and is found in th
 | 2. Yeesha's Joyride (1:03)              | ?                              | ?                                                  |
 | 3. Enter Tomahna (6:37)                 | `sequence_to_1a_full.sb0`      | `FULL_play_MU_TO_01A_full` (3:13, part 1)          |
 |                                         | `sequence_to_1b_full.sb0`      | `FULL_play_MU_TO_01B_full` (3:31, part 2)          |
-| 4. Darkness (2:59)                      | `sequence_to_2a.sb0`           | `PAD_Play_MU_TO_02A_pad` (2:53), with dozens of other<br>short sounds from the same `.sb0` file overlaid—also,<br>the _game_ asset is oddly present in the first 25 seconds of<br><https://cosmosis.bandcamp.com/track/spanish-gypsy>?? |
-| 5. Achenar's Prelude (0:13)             | `video_w4_stream.sb0`†         | 258 (0:13, has game sounds over it)                |
-|                                         | `video_w1_stream.sb0`†         | 87 (0:15, similar, has game sounds over it)        |
-| 6. Jungle Landing (3:40)                | `sfx_achenar_w2_z02_n190.sb0`  | 107 (0:44, has game sounds over it)                |
+| 4. Darkness (2:59)                      | `sequence_to_2a.sb0`           | `PAD_Play_MU_TO_02A_pad` (2:53), with dozens<br>of other short sounds from the same `.sb0`<br>file overlaid—also, the _game_ asset is oddly<br>present in the first 25 seconds of<br><https://cosmosis.bandcamp.com/track/spanish-gypsy>?? |
+| 5. Achenar's Prelude (0:13)             | `video_w4_stream.sb0`†         | 258 (0:13, game sounds over it)                    |
+|                                         | `video_w1_stream.sb0`†         | 87 (0:15, similar, game sounds over it)            |
+| 6. Jungle Landing (3:40)                | `sfx_achenar_w2_z02_n190.sb0`  | 107 (0:44, game sounds over it)                    |
 |                                         | `sequence_hn_1a_full.sb0`      | `FULL_Play_MU_HN_01A_full` (3:14, part 2)          |
 |                                         | `sequence_hn_1_full.sb0`       | `FULL_Play_MU_HN_01_full` (3:08, part 2 alternate) |
 | 7. The Swamp (2:25)                     | `sequence_hn_1b_full.sb0`      | `FULL_Play_MU_HN_01B_full` (3:38)                  |
 | 8. The Predator (3:59)                  | `sequence_hn_1c_full.sb0`      | `FULL_Play_MU_HN_01C_full` (4:20)                  |
 |                                         | `sequence_hn_1c_instr.sb0`     | `INSTR_Play_MU_HN_01C_instr` (4:17, alternate)     |
 | 9. Lakeside (2:36)                      | `sequence_hn_2_full.sb0`       | `FULLSEQ_Play_MU_HN_02_full` (2:34)                |
-| 10. Achenar Meeting (1:53)              | `video_w4_stream.sb0`†         | 222 (1:56, has speech over it)                     |
+| 10. Achenar Meeting (1:53)              | `video_w4_stream.sb0`†         | 222 (1:56, speech over it)                         |
 | 11. Welcome (3:00)                      | `sequence_hn_3_full.sb0`       | `FULL_Play_MU_HN_03_full` (2:57)                   |
 | 12. Enter Spire (3:30)                  | `sequence_sp_1.sb0`            | `FULLSEQ_Play_MU_SP_01_full` (3:28)                |
 |                                         | `sequence_sp_1_synth.sb0`      | `FULLSEQ_MU_SP_01_synth` (3:28, alternate)         |
 |                                         | `sequence_sp_1_orch.sb0`       | `FULLSEQ_MU_SP_01_orch` (2:47, alternate)          |
 | 13. Prison Level (4:56)                 | `sequence_sp_2_full.sb0`       | `FULL_Play_MU_SP_02_full` (4:54)                   |
-| 14. Sirrus Defends/Sirrus' rage (2:31)  | `video_w4_stream.sb0`†         | 234 (1:30, part 1, has speech over it)             |
-|                                         | `video_w3_stream.sb0`†         | 22 (1:05, part 2, has speech over it)              |
+| 14. Sirrus Defends/Sirrus' rage (2:31)  | `video_w4_stream.sb0`†         | 234 (1:30, part 1, speech over it)                 |
+|                                         | `video_w3_stream.sb0`†         | 22 (1:05, part 2, speech over it)                  |
 | 15. Nearest Island (2:52)               | `sequence_sp_3_full.sb0`       | `FULL_Play_MU_SP_03_full` (3:08)                   |
-| 16. Leaving Spire (1:00)                | `sfx_sirrus_w3_z06_n070.sb0`   | 97 (0:59, has game sounds over it)                 |
+| 16. Leaving Spire (1:00)                | `sfx_sirrus_w3_z06_n070.sb0`   | 97 (0:59, game sounds over it)                     |
 | 17. Enter Serenia (3:11)                | `sequence_sa_1_full.sb0`       | `FULL_Play_MU_SA_01_full` (3:10)                   |
 |                                         | `sequence_sa_1_instrument.sb0` | `INSTRUMENT_Play_MU_SA_01_instr` (3:10, alternate) |
 | 18. The Monastery (2:12)                | `sequence_sa_2_full.sb0`       | `FULL_Play_MU_SA_02_full` (2:10)                   |
@@ -102,6 +102,6 @@ For entries denoted with `†`, the file is language-specific and is found in th
 |                                         | `sequence_serenians_b.sb0`     | `CHOIR_Play_MU_SERENIANS_B` (0:47, part 2)         |
 |                                         | `sequence_serenians_c.sb0`     | `CHOIR_Play_MU_SERENIANS_C` (0:44, part 3)         |
 | 22. The Revelation/The Sacrifice (2:24) | ?                              | ?                                                  |
-| 23. End Game (2:07)                     | `video_w4_stream.sb0`†         | 232 (2:05, has alternate ending 1 speech over it)  |
-|                                         | `video_w4_stream.sb0`†         | 233 (2:05, has alternate ending 2 speech over it)  |
-| 24. Atrus' speech (1:45)                | `video_w1_stream.sb0`†         | 65 (1:43, has speech over it)                      |
+| 23. End Game (2:07)                     | `video_w4_stream.sb0`†         | 232 (2:05, alternate ending 1 speech over it)      |
+|                                         | `video_w4_stream.sb0`†         | 233 (2:05, alternate ending 2 speech over it)      |
+| 24. Atrus' speech (1:45)                | `video_w1_stream.sb0`†         | 65 (1:43, speech over it)                          |
