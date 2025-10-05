@@ -1,8 +1,6 @@
 # Myst IV Asset Explorer
 
-Browse and extract Myst IV game assets, and play audio assets in-app with gapless looping in a high-performance app built with [.NET 8](https://dotnet.microsoft.com/en-us/) and [Avalonia UI](https://avaloniaui.net/).
-
-![App screenshot showing in-app browsing panes and audio player](docs/images/screenshot.png)
+Browse and extract Myst IV game assets, [view 360° imagery](#360-viewer), and [play audio assets](#audio) in-app with gapless looping, and [open video assets](#video), in a high-performance app built with [.NET 8](https://dotnet.microsoft.com/en-us/) and [Avalonia UI](https://avaloniaui.net/).
 
 ## How to use
 
@@ -10,7 +8,23 @@ Make sure Myst IV is installed somewhere under your `Program Files (x86)` direct
 
 Download and run the .exe file from the latest release of Myst IV Asset Explorer from <https://github.com/jnm2/MystIVAssetExplorer/releases> and run it. If .NET 8 or newer is not installed, the app will take you to the download page for .NET 8.
 
+## 360° viewer
+
+![App screenshot showing in-app browsing panes and audio player](docs/images/screenshot-360.png)
+
+To explore the layers of the nodes for the game, expand the `data.m4b/global/w#/z##` folders and click on various `n###` folders which define the nodes of the game.
+
+Click anywhere in the viewer to stop the initial rotation. Click and drag to look up, down, left, and right. After clicking in the viewer, type `f` to switch to the front face, `b` to the back, `l` to the left, `r` to the right, `t` to the top, and `B` (Shift+b) to the bottom. The mouse wheel can also be used to change the zoom (field of view). By default, the zoom perfectly matches a face image to the viewport width or height.
+
+Some nodes are not rotatable in the game, so there is only one face and rotating is disabled in the 360° viewer for these nodes. Rarely, some nodes don't contain their own imagery and there is nothing to see with the 360° viewer.
+
+Clicking a node folder chooses the `cube/layer_default.m4b/set_default` subfolder by default, but you can view other specialized layers by expanding the `cube` folder and picking other leaf folders:
+
+![App screenshot showing 360° node viewer](docs/images/node-subfolders.png)
+
 ## Audio
+
+![App screenshot showing browsing panes and audio player](docs/images/screenshot-audio.png)
 
 To explore the audio for the game, expand the `sound.m4b/data` folder and click on various `.sb0` files which define the audio streams for the game. For language-specific audio files, expand the top-level language folder and its contained `sound.m4b/data`.
 
@@ -19,6 +33,8 @@ Myst IV stores audio in three audio formats: uncompressed PCM, a proprietary Ubi
 The game's music is contained in `mu_music.sb0`, `music_personality_test.sb0`, and the `sequence_*.sp0` files. See [Music not included in the soundtrack](#music-not-included-in-the-soundtrack) and [Soundtrack music and variants](#soundtrack-music-and-variants) for overviews of the music in the game.
 
 ## Video
+
+![App screenshot showing external video player](docs/images/screenshot-video.png)
 
 The game's video is contained in .bik files. These use the [Bink Video](https://en.wikipedia.org/wiki/Bink_Video) format. The video files contain no audio.
 
