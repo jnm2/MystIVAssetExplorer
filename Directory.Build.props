@@ -1,4 +1,5 @@
 <Project>
+
   <PropertyGroup>
     <Version>0.1.0</Version>
 
@@ -6,5 +7,8 @@
     <Nullable>enable</Nullable>
     <AvaloniaVersion>11.1.0</AvaloniaVersion>
     <MSBuildTreatWarningsAsErrors Condition="'$(Configuration)' != 'Debug'">true</MSBuildTreatWarningsAsErrors>
+    <DebugType>embedded</DebugType>
+    <EmbedAllSources>true</EmbedAllSources>
   </PropertyGroup>
+
 </Project>
