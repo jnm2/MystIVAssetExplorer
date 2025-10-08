@@ -117,9 +117,18 @@ public class MainViewModel : ViewModelBase, IDisposable
 
                 if (matchedFile is not null)
                 {
-                    SelectedAssetBrowserNode = node;
-                    SelectedFolderListings.Clear();
-                    SelectedFolderListings.Add(matchedFile);
+                    if (matchedFile is AssetFolderListingFileBasedSubfolder subfolder)
+                    {
+                        SelectedAssetBrowserNode = subfolder.SubfolderNode;
+                        subfolder.SubfolderNode.IsExpanded = true;
+                        node.IsExpanded = true;
+                    }
+                    else
+                    {
+                        SelectedAssetBrowserNode = node;
+                        SelectedFolderListings.Clear();
+                        SelectedFolderListings.Add(matchedFile);
+                    }
                     return true;
                 }
 
