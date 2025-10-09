@@ -9,7 +9,7 @@ namespace MystIVAssetExplorer.Formats;
 
 public sealed record Sb0File(ImmutableArray<SoundStream> SoundStreams)
 {
-    public static Sb0File? Deserialize(ReadOnlyMemory<byte> memory)
+    public static Sb0File Deserialize(ReadOnlyMemory<byte> memory)
     {
         var reader = new SpanReader(memory.Span);
 
@@ -25,7 +25,7 @@ public sealed record Sb0File(ImmutableArray<SoundStream> SoundStreams)
             _ => throw new NotImplementedException("Expected 0 or 1"),
         };
 
-        _ = reader.ReadInt32LittleEndian();
+        var indexSize = reader.ReadInt32LittleEndian();
         if (reader.ReadInt32LittleEndian() != -1) throw new NotImplementedException("Expected -1");
         if (reader.ReadInt32LittleEndian() != -1) throw new NotImplementedException("Expected -1");
 
@@ -51,11 +51,22 @@ public sealed record Sb0File(ImmutableArray<SoundStream> SoundStreams)
             var streamId = reader.ReadUInt16LittleEndian();
             var groupId = reader.ReadUInt16LittleEndian();
             var entryType = reader.ReadInt32LittleEndian();
-            if (entryType != 1) return null;
+
+            if (entryType is 2 or 4 or 5 or 8)
+            {
+                var span = reader.ReadSpan(156); // Skip the rest of the record.
+                continue;
+            }
+            else if (entryType != 1)
+            {
+                throw new NotImplementedException("Entry type " + entryType);
+            }
+
             var length = reader.ReadInt32LittleEndian();
             if (reader.ReadInt32LittleEndian() != 0) throw new NotImplementedException("Expected 0");
             var offset = reader.ReadInt32LittleEndian();
-            if (reader.ReadInt32LittleEndian() != 0) throw new NotImplementedException("Expected 0");
+            if (reader.ReadInt16LittleEndian() != 0) throw new NotImplementedException("Expected 0");
+            if (reader.ReadInt16LittleEndian() is not (>= -7 and <= 0)) throw new NotImplementedException("Expected between -6 and 0");
             if (reader.ReadInt32LittleEndian() != 1) throw new NotImplementedException("Expected 1");
             if (reader.ReadInt32LittleEndian() != 0) throw new NotImplementedException("Expected 0");
             if (reader.ReadInt32LittleEndian() != 0) throw new NotImplementedException("Expected 0");
@@ -100,15 +111,15 @@ public sealed record Sb0File(ImmutableArray<SoundStream> SoundStreams)
             if (!referencesExternalDataFile && !containsOwnAudioData)
                 throw new NotImplementedException("The header claims the file has no audio data of its own, but the stream entry claims to reference some.");
 
-            var soundIds = soundIdsByStreamIndex[i];
-            if (soundIds is null)
-                throw new NotImplementedException("Unused stream");
+            var soundIds = soundIdsByStreamIndex[i] ?? [];
 
             if (soundIds.Any(id => id.GroupId != groupId))
                 throw new NotImplementedException("Sounds and stream are in different groups");
 
             soundStreams.Add(new SoundStream(streamId, groupId, [.. soundIds.Select(id => id.SoundId)], referencesExternalDataFile, name, Data: null, length, offset, byteRate, sampleRate, bitsPerSample, channelCount, format));
         }
+
+        _ = reader.ReadSpan(indexSize);
 
         if (containsOwnAudioData)
         {
@@ -128,6 +139,6 @@ public sealed record Sb0File(ImmutableArray<SoundStream> SoundStreams)
             }
         }
 
-        return new Sb0File(soundStreams.MoveToImmutable());
+        return new Sb0File(soundStreams.DrainToImmutable());
     }
 }

@@ -16,6 +16,13 @@ public ref struct SpanReader(ReadOnlySpan<byte> span)
         return value;
     }
 
+    public short ReadInt16LittleEndian()
+    {
+        var value = BinaryPrimitives.ReadInt16LittleEndian(Span);
+        Span = Span[sizeof(short)..];
+        return value;
+    }
+
     public int ReadInt32LittleEndian()
     {
         var value = BinaryPrimitives.ReadInt32LittleEndian(Span);

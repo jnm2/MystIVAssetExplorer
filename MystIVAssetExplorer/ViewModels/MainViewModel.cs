@@ -336,7 +336,7 @@ public class MainViewModel : ViewModelBase, IDisposable
             Name = m4bFile.Name,
             ChildNodes = [],
             FolderListing = [..
-                sb0File?.SoundStreams.Select(soundStream =>
+                sb0File.SoundStreams.Select(soundStream =>
                 {
                     var name =
                         (!soundStream.ReferencesExternalDataFile ? soundStream.DataFileName : null)
@@ -349,8 +349,7 @@ public class MainViewModel : ViewModelBase, IDisposable
                         name,
                         soundStream,
                         soundStream.ReferencesExternalDataFile ? soundDataFiles![soundStream.DataFileName] : null);
-                })
-                ?? [new AssetFolderListingMessage("(Sound stream entry type not yet supported)")]],
+                })],
         };
     }
 
