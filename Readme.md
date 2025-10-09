@@ -69,7 +69,7 @@ For entries denoted with `†`, the file is language-specific and is found in th
 | Soundtrack title                        | `sound.m4b/data` file          | Stream                                             |
 |-----------------------------------------|--------------------------------|----------------------------------------------------|
 | 1. Main Theme (4:29)                    | `mu_music.sb0`                 | 0 (4:29)                                           |
-| 2. Yeesha's Joyride (1:03)              | ?                              | ?                                                  |
+| 2. Yeesha's Joyride (1:03)              | `video_w5_stream.sb0`†         | 311 (1:08, speech over it)                         |
 | 3. Enter Tomahna (6:37)                 | `sequence_to_1a_full.sb0`      | `FULL_play_MU_TO_01A_full` (3:13, part 1)          |
 |                                         | `sequence_to_1b_full.sb0`      | `FULL_play_MU_TO_01B_full` (3:31, part 2)          |
 | 4. Darkness (2:59)                      | `sequence_to_2a.sb0`           | `PAD_Play_MU_TO_02A_pad` (2:53), with dozens<br>of other short sounds from the same `.sb0`<br>file overlaid—also, the _game_ asset is oddly<br>present in the first 25 seconds of<br><https://cosmosis.bandcamp.com/track/spanish-gypsy>?? |
