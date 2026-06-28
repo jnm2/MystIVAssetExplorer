@@ -52,6 +52,8 @@ public sealed record Sb0File(ImmutableArray<SoundStream> SoundStreams)
             var groupId = reader.ReadUInt16LittleEndian();
             var entryType = reader.ReadInt32LittleEndian();
 
+            // Entry type 1 covers all audio data in all the .ss0 streams, so the rest of the records are
+            // not relevant to discovering unique audio clips.
             if (entryType is 2 or 4 or 5 or 8)
             {
                 var span = reader.ReadSpan(156); // Skip the rest of the record.
